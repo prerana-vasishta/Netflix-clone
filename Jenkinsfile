@@ -47,22 +47,25 @@ pipeline {
                 sh '''
                     docker build \
                     --build-arg TMDB_V3_API_KEY=${TMDB_API_KEY} \
-                    -t netflix-clone .
+                    -t ${IMAGE_NAME}:${IMAGE_TAG} .
                 '''
             }
         }
 
-        stage('Docker Run') {
+        // Stage 4: Docker Push to DockerHub
+        stage('Docker Push') {
             steps {
-                // Stop any existing container and run the new Docker container
-                sh '''
-                    docker ps -q --filter "ancestor=netflix-clone" | xargs -r docker stop
-                    docker run -d -p 8081:80 netflix-clone
-                '''
+                // Log in to DockerHub using credentials stored in Jenkins
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-username', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+                }
             }
         }
 
-        // Stage 4: Deploy to Kubernetes
+        // Stage 5: Deploy to Kubernetes
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes...'
@@ -75,7 +78,7 @@ pipeline {
             }
         }
 
-        // Stage 5: Access Info (for Kubernetes)
+        // Stage 6: Access Info (for Kubernetes)
         stage('Access Info') {
             steps {
                 withCredentials([file(credentialsId: 'minikube-config', variable: 'KUBECONFIG')]) {
