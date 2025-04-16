@@ -21,7 +21,4 @@ spec:
         - containerPort: 80
         env:
         - name: TMDB_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: tmdb-api-key
-              key: api_key
+          value: "4814d2daa04521fab8b5534221ff0038"  # Your API key here
