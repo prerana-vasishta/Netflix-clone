@@ -19,3 +19,9 @@ spec:
         image: prevasishta98/netflix-clone:latest
         ports:
         - containerPort: 80
+        env:
+        - name: TMDB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tmdb-api-key
+              key: api_key
