@@ -56,7 +56,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 // Log in to DockerHub using credentials stored in Jenkins
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-username', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'docker_config', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                         docker push ${IMAGE_NAME}:${IMAGE_TAG}
