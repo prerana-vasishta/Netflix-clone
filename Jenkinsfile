@@ -84,7 +84,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'minikube-config', variable: 'KUBECONFIG')]) {
                     sh '''
                         echo "Forwarding port 9090 to service port 80"
-                        kubectl port-forward svc/netflix-app 9090:30007 &
+                        kubectl port-forward svc/netflix-app 9090:80 &
                     '''
                 }
                 echo "✅ Deployment Successful!"
